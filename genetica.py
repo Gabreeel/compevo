@@ -1,4 +1,11 @@
-from lcg import randomint
+def dna_valido(seq):
+    import re
+    if not re.fullmatch(r'[ATCG]+', seq):
+        return False
+    if re.search(r'(A{3,}|T{3,}|C{3,}|G{3,})', seq):
+        return False
+    return True
+import random
 
 alfabeto = "ATCG"
 
@@ -17,9 +24,14 @@ def caracter_em(s, i):
     return '' #caso índice fora do intervalo
 
 def gerar_individuo(tamanho):
-    resultado = ''
-    for _ in range(tamanho):
-        i = randomint(comprimento(alfabeto))
-        resultado += caracter_em(alfabeto, i)
-    return resultado
+    while True:
+        individuo = ''
+        for i in range(tamanho):
+            base = random.choice(alfabeto)
+            # Evita repetições de 3 ou mais
+            if i >= 2 and base == individuo[-1] and base == individuo[-2]:
+                base = random.choice([b for b in alfabeto if b != base])
+            individuo += base
+        if dna_valido(individuo):
+            return individuo
 

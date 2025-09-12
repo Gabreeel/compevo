@@ -4,7 +4,7 @@ from fitness import fitness
 from selecao import roleta_tendenciosa, selecionar_melhores, torneio_binario
 from crossover import crossover
 from mutar import mutar
-from alg_genetico import algoritmo_genetico
+from alg_genetico import algoritmo_genetico, salvar_csv_geracao
 
 def gerar_populacao(tamanho_pop, tamanho_individuo):
     populacao = []
@@ -13,10 +13,25 @@ def gerar_populacao(tamanho_pop, tamanho_individuo):
         populacao.append(individuo)
     return populacao
 
+def dna_valido(seq):
+    # Exemplo de regra gramatical: apenas caracteres A, T, C, G e sem repetições de 3 iguais
+    import re
+    if not re.fullmatch(r'[ATCG]+', seq):
+        return False
+    if re.search(r'(A{3,}|T{3,}|C{3,}|G{3,})', seq):
+        return False
+    return True
+
 alvo = "ATCGTAGGCTA"
+if not dna_valido(alvo):
+    raise ValueError(f"Sequência alvo inválida para as regras gramaticais: {alvo}")
 elite = 2
 tamanho = comprimento(alvo)
 populacao = gerar_populacao(5, tamanho)
+
+# Após gerar a população inicial, salva CSV da geração 0
+salvar_csv_geracao(populacao, alvo, 0, 'pop_geracao_0.csv')
+
 resultado, historico = algoritmo_genetico(
     alvo,
     roleta_tendenciosa,
@@ -24,7 +39,8 @@ resultado, historico = algoritmo_genetico(
     taxa_mutacao=0.05,
     max_geracoes=200,
     elite=10,
-    verbose_interval=25
+    verbose_interval=25,
+    salvar_csv=True  # Gera todas_geracoes_roleta.csv
 )
 
 resultado_torneio, historico_torneio = algoritmo_genetico(
@@ -34,7 +50,8 @@ resultado_torneio, historico_torneio = algoritmo_genetico(
     taxa_mutacao=0.05,
     max_geracoes=200,
     elite=10,
-    verbose_interval=25
+    verbose_interval=25,
+    salvar_csv=True  # Gera todas_geracoes_torneio.csv
 )
 
 print("="*75)
@@ -140,3 +157,7 @@ plt.ylabel("Fitness Máxima")
 plt.legend()
 plt.grid(True)
 plt.show()
+
+# Para salvar CSV de cada geração, altere o algoritmo_genetico para incluir a chamada:
+# salvar_csv_geracao(populacao, alvo, geracao, f'pop_geracao_{geracao}.csv')
+# (Já implementado no alg_genetico.py se solicitado)
