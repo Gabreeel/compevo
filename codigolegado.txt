@@ -1,0 +1,43 @@
+Alvo pré gramática:
+
+alvo = "ATCGTAGGCTA"
+
+Alvo pós gramática:
+
+def dna_valido(seq):
+    # Exemplo de regra gramatical: apenas caracteres A, T, C, G e sem repetições de 3 iguais
+    import re
+    if not re.fullmatch(r'[ATCG]+', seq):
+        return False
+    if re.search(r'(A{3,}|T{3,}|C{3,}|G{3,})', seq):
+        return False
+    return True
+
+alvo = "ATCGTAGGCTA"
+if not dna_valido(alvo):
+    raise ValueError(f"Sequência alvo inválida para as regras gramaticais: {alvo}")
+
+    A função de validação gramatical dna_valido foi implementada em app.py e agora verifica se a sequência alvo segue as regras (apenas A, T, C, G e sem repetições de três ou mais iguais). Se a sequência for inválida, uma exceção é lançada.
+
+
+Função de geração de individuos antes:
+
+def gerar_individuo(tamanho):
+    resultado = ''
+    for _ in range(tamanho):
+        i = randomint(comprimento(alfabeto))
+        resultado += caracter_em(alfabeto, i)
+
+
+Função de geração de individuos depois:
+
+def gerar_individuo(tamanho):
+    resultado = ''
+    for _ in range(tamanho):
+        i = randomint(comprimento(alfabeto))
+        resultado += caracter_em(alfabeto, i)
+        while True:
+            individuo = ''.join(caracter_em(alfabeto, randomint(comprimento(alfabeto))) for _ in range(tamanho))
+            if dna_valido(individuo):
+                return individuo
+
